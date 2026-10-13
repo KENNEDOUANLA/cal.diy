@@ -329,8 +329,8 @@
   --cal-text-error: hsla(0, 63%, 31%, 1);
 
   /* Brand */
-  --cal-brand: hsla(221, 39%, 11%, 1);
-  --cal-brand-emphasis: hsla(0, 0%, 6%, 1);
+  --cal-brand: hsla(36, 100%, 50%, 1);
+  --cal-brand-emphasis: hsla(36, 100%, 42%, 1);
   --cal-brand-text: hsla(0, 0%, 100%, 1);
 
   /* Box Shadows */
@@ -453,9 +453,9 @@
   --cal-text-error: hsla(3, 66%, 93%, 1);
 
   /* Brand */
-  --cal-brand: hsla(0, 0%, 100%, 1);
-  --cal-brand-emphasis: hsla(218, 11%, 65%, 1);
-  --cal-brand-text: hsla(0, 0%, 0%, 1);
+  --cal-brand: hsla(36, 100%, 50%, 1);
+  --cal-brand-emphasis: hsla(36, 100%, 58%, 1);
+  --cal-brand-text: hsla(0, 0%, 100%, 1);
 
   /* Fill Colors */
   --fill-emphasis: var(--cal-text-emphasis);

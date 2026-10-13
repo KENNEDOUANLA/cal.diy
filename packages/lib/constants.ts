@@ -98,9 +98,9 @@ export const PUBLIC_QUICK_AVAILABILITY_ROLLOUT =
 
 /** @deprecated use `WEBAPP_URL` */
 export const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_WEBAPP_URL || `https://${process.env.VERCEL_URL}`;
-export const LOGO = "/calcom-logo-white-word.svg";
-export const LOGO_DARK = "/cal-logo-word-black.svg";
-export const LOGO_ICON = "/cal-com-icon-white.svg";
+export const LOGO = "/gesticarros-logo.png";
+export const LOGO_DARK = "/gesticarros-logo.png";
+export const LOGO_ICON = "/gesticarros-icon.png";
 export const AVATAR_FALLBACK = "/avatar.svg";
 export const FAVICON_16 = "/favicon-16x16.png";
 export const FAVICON_32 = "/favicon-32x32.png";
@@ -159,8 +159,8 @@ export const CREDENTIAL_SYNC_ENDPOINT = process.env.CALCOM_CREDENTIAL_SYNC_ENDPO
 // Service Account Encryption Key for encrypting/decrypting service account keys
 export const SERVICE_ACCOUNT_ENCRYPTION_KEY = process.env.CALCOM_SERVICE_ACCOUNT_ENCRYPTION_KEY;
 
-export const DEFAULT_LIGHT_BRAND_COLOR = "#292929";
-export const DEFAULT_DARK_BRAND_COLOR = "#fafafa";
+export const DEFAULT_LIGHT_BRAND_COLOR = "#ff9800";
+export const DEFAULT_DARK_BRAND_COLOR = "#ff9800";
 
 export const TOP_BANNER_HEIGHT = 40;
 

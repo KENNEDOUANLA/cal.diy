@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import type { MembershipRole } from "@calcom/prisma/enums";
 import type { TApiKeys } from "~/api-keys/api-keys/components/ApiKeyListItem";
 import { Dialog } from "@calcom/features/components/controlled-dialog";
 import ApiKeyDialogForm from "~/api-keys/api-keys/components/ApiKeyDialogForm";
@@ -40,9 +41,10 @@ export const NewApiKeyButton = () => {
 
 type Props = {
   apiKeys: RouterOutputs["viewer"]["apiKeys"]["list"];
+  org?: { id: number; name?: string; role: MembershipRole } | null;
 };
 
-const ApiKeysView = ({ apiKeys: data }: Props) => {
+const ApiKeysView = ({ apiKeys: data, org }: Props) => {
   const { t } = useLocale();
 
   const [apiKeyModal, setApiKeyModal] = useState(false);
@@ -95,7 +97,11 @@ const ApiKeysView = ({ apiKeys: data }: Props) => {
 
       <Dialog open={apiKeyModal} onOpenChange={setApiKeyModal}>
         <DialogContent type="creation">
-          <ApiKeyDialogForm handleClose={() => setApiKeyModal(false)} defaultValues={apiKeyToEdit} />
+          <ApiKeyDialogForm
+            handleClose={() => setApiKeyModal(false)}
+            defaultValues={apiKeyToEdit}
+            org={org}
+          />
         </DialogContent>
       </Dialog>
     </SettingsHeader>

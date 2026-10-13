@@ -39,7 +39,7 @@ const Page = async () => {
   const userId = session.user.id;
   const apiKeys = await getCachedApiKeys(userId);
 
-  return <ApiKeysView apiKeys={apiKeys} />;
+  return <ApiKeysView apiKeys={apiKeys} org={session.user.org} />;
 };
 
 export default Page;

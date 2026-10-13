@@ -5,6 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import dayjs from "@calcom/dayjs";
 import type { TApiKeys } from "~/api-keys/api-keys/components/ApiKeyListItem";
 import { API_NAME_LENGTH_MAX_LIMIT } from "@calcom/lib/constants";
+import { MembershipRole } from "@calcom/prisma/enums";
 import { IS_CALCOM } from "@calcom/lib/constants";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { trpc } from "@calcom/trpc/react";
@@ -21,11 +22,17 @@ import { revalidateApiKeysList } from "@calcom/web/app/(use-page-wrapper)/settin
 export default function ApiKeyDialogForm({
   defaultValues,
   handleClose,
+  org,
 }: {
   defaultValues?: Omit<TApiKeys, "userId" | "createdAt" | "lastUsedAt"> & { neverExpires?: boolean };
   handleClose: () => void;
+  org?: { id: number; name?: string; role: MembershipRole } | null;
 }) {
   const { t } = useLocale();
+  // Only offer org-scoping on creation: a key's team is fixed for its lifetime server-side (see
+  // packages/trpc/server/routers/viewer/apiKeys/edit.schema.ts), so showing this on edit would be misleading.
+  const canScopeToOrg =
+    !defaultValues && !!org && (org.role === MembershipRole.OWNER || org.role === MembershipRole.ADMIN);
   const utils = trpc.useUtils();
 
   const updateApiKeyMutation = trpc.viewer.apiKeys.edit.useMutation({
@@ -56,6 +63,7 @@ export default function ApiKeyDialogForm({
       note: defaultValues?.note || "",
       neverExpires: defaultValues?.neverExpires || false,
       expiresAt: defaultValues?.expiresAt || dayjs().add(30, "day").toDate(),
+      associateWithOrg: false,
     },
     mode: "onChange",
     criteriaMode: "all",
@@ -142,7 +150,11 @@ export default function ApiKeyDialogForm({
             if (defaultValues) {
               await updateApiKeyMutation.mutate({ id: defaultValues.id, note: event.note });
             } else {
-              const apiKey = await utils.client.viewer.apiKeys.create.mutate(event);
+              const { associateWithOrg, ...createInput } = event;
+              const apiKey = await utils.client.viewer.apiKeys.create.mutate({
+                ...createInput,
+                teamId: canScopeToOrg && associateWithOrg ? org?.id : undefined,
+              });
               setApiKey(apiKey);
               setApiKeyDetails({ ...event });
               await utils.viewer.apiKeys.list.invalidate();
@@ -191,6 +203,20 @@ export default function ApiKeyDialogForm({
               )}
             />
           </div>
+          {canScopeToOrg && (
+            <div className="flex justify-between py-2">
+              <span className="text-default flex items-center text-sm font-medium">
+                {t("api_key_org_scope_label", { orgName: org?.name ?? "" })}
+              </span>
+              <Controller
+                name="associateWithOrg"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <Switch label={t("api_key_org_scope_switch_label")} onCheckedChange={onChange} checked={value} />
+                )}
+              />
+            </div>
+          )}
           {!defaultValues && (
             <div className="flex flex-col">
               <div className="flex justify-between py-2">

@@ -1,0 +1,30 @@
+# Machine-specific Traefik wiring for booking.gesticarros.com.
+# Not committed to the repo (untracked) — see git status before any `git add -A`.
+networks:
+  proxy:
+    external: true
+
+services:
+  calcom:
+    networks:
+      - stack
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cal-diy.entrypoints=websecure"
+      - "traefik.http.routers.cal-diy.rule=Host(`booking.gesticarros.com`)"
+      - "traefik.http.routers.cal-diy.tls=true"
+      - "traefik.http.routers.cal-diy.tls.certresolver=letsencrypt"
+      - "traefik.http.services.cal-diy.loadbalancer.server.port=3000"
+
+  calcom-api:
+    networks:
+      - stack
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cal-diy-api.entrypoints=websecure"
+      - "traefik.http.routers.cal-diy-api.rule=Host(`api.booking.gesticarros.com`)"
+      - "traefik.http.routers.cal-diy-api.tls=true"
+      - "traefik.http.routers.cal-diy-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.cal-diy-api.loadbalancer.server.port=3002"
