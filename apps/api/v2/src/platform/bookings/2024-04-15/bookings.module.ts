@@ -16,6 +16,7 @@ import { ApiKeysRepository } from "@/modules/api-keys/api-keys-repository";
 import { AppsRepository } from "@/modules/apps/apps.repository";
 import { CredentialsRepository } from "@/modules/credentials/credentials.repository";
 import { KyselyModule } from "@/modules/kysely/kysely.module";
+import { MembershipsModule } from "@/modules/memberships/memberships.module";
 import { OAuthClientRepository } from "@/modules/oauth-clients/oauth-client.repository";
 import { OAuthClientUsersService } from "@/modules/oauth-clients/services/oauth-clients-users.service";
 import { OAuthFlowService } from "@/modules/oauth-clients/services/oauth-flow.service";
@@ -41,6 +42,7 @@ import { UsersModule } from "@/modules/users/users.module";
     RegularBookingModule,
     RecurringBookingModule,
     BookingEventHandlerModule,
+    MembershipsModule,
   ],
   providers: [
     TokensRepository,
