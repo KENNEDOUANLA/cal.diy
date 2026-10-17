@@ -406,6 +406,20 @@ export const getPublicEvent = async (
     };
   }
 
+  const publicUserQuery = orgQuery
+    ? {
+        profiles: {
+          some: {
+            organization: orgQuery,
+            username,
+          },
+        },
+      }
+    : {
+        username,
+        profiles: { none: {} },
+      };
+
   const usersOrTeamQuery = isTeamEvent
     ? {
         team: {
@@ -414,23 +428,9 @@ export const getPublicEvent = async (
         },
       }
     : {
-        users: {
-          some: {
-            ...(orgQuery
-              ? {
-                  profiles: {
-                    some: {
-                      organization: orgQuery,
-                      username: username,
-                    },
-                  },
-                }
-              : {
-                  username,
-                  profiles: { none: {} },
-                }),
-          },
-        },
+        // The profile page also lists events by userId; API-created events may
+        // have an owner without a corresponding entry in the users relation.
+        OR: [{ users: { some: publicUserQuery } }, { owner: publicUserQuery }],
         team: null,
       };
 
@@ -444,23 +444,23 @@ export const getPublicEvent = async (
   });
 
   // If no event was found, check for platform org user event
-  if (!event && !orgQuery) {
+  if (!event && !orgQuery && !isTeamEvent) {
+    const platformUserQuery = {
+      username,
+      isPlatformManaged: false,
+      profiles: {
+        some: {
+          organization: {
+            isPlatform: true,
+          },
+        },
+      },
+    };
     event = await prisma.eventType.findFirst({
       where: {
         slug: eventSlug,
-        users: {
-          some: {
-            username,
-            isPlatformManaged: false,
-            profiles: {
-              some: {
-                organization: {
-                  isPlatform: true,
-                },
-              },
-            },
-          },
-        },
+        team: null,
+        OR: [{ users: { some: platformUserQuery } }, { owner: platformUserQuery }],
       },
       select: getPublicEventSelect(fetchAllUsers),
     });
