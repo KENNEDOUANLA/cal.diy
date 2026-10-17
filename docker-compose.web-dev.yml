@@ -1,0 +1,21 @@
+services:
+  calcom:
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        yarn install --immutable --mode=skip-build &&
+        yarn prisma generate &&
+        yarn workspace @calcom/web dev
+    environment:
+      NODE_ENV: development
+      NODE_OPTIONS: --max-old-space-size=2048
+    volumes:
+      - .:/calcom
+      - web_dev_node_modules:/calcom/node_modules
+      - web_dev_next:/calcom/apps/web/.next
+    healthcheck:
+      start_period: 5m
+
+volumes:
+  web_dev_node_modules:
+  web_dev_next:

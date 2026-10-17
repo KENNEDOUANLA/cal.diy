@@ -260,9 +260,11 @@ export class UserRepository {
               ? {
                   organization: whereClauseForOrgWithSlugOrRequestedSlug(orgSlug),
                 }
-              : {
-                  organization: null,
-                }),
+              : process.env.ORGANIZATIONS_ENABLED === "1" || process.env.ORGANIZATIONS_ENABLED === "true"
+                ? {
+                    organization: null,
+                  }
+                : {}),
           };
     return { where, profiles };
   }

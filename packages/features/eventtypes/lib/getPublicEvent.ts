@@ -417,7 +417,9 @@ export const getPublicEvent = async (
       }
     : {
         username,
-        profiles: { none: {} },
+        ...(process.env.ORGANIZATIONS_ENABLED === "1" || process.env.ORGANIZATIONS_ENABLED === "true"
+          ? { profiles: { none: {} } }
+          : {}),
       };
 
   const usersOrTeamQuery = isTeamEvent

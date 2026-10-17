@@ -1,7 +1,8 @@
 import prismock from "@calcom/testing/lib/__mocks__/prisma";
 import { UserRepository } from "@calcom/features/users/repositories/UserRepository";
 import { CreationSource } from "@calcom/prisma/enums";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
 vi.mock("@calcom/app-store/delegationCredential", () => ({
   enrichHostsWithDelegationCredentials: vi.fn(),
   getUsersCredentialsIncludeServiceAccountKey: vi.fn(),
@@ -20,8 +21,51 @@ vi.mock("@calcom/i18n/server", () => {
 });
 
 describe("UserRepository", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   beforeEach(() => {
     prismock;
+  });
+
+  describe("public usernames when organizations are disabled", () => {
+    test.each([undefined, "0", "false"])("finds organization members with flag %s", async (enabled) => {
+      vi.stubEnv("ORGANIZATIONS_ENABLED", enabled);
+      const user = await prismock.user.create({
+        data: {
+          username: "public-org-member",
+          email: "public-org-member@example.com",
+          organizationId: 2,
+        },
+      });
+
+      const users = await new UserRepository(prismock).findUsersByUsername({
+        usernameList: ["public-org-member"],
+        orgSlug: null,
+      });
+
+      expect(users.map(({ id }) => id)).toContain(user.id);
+      expect(users[0].profile.organization).toBeNull();
+    });
+
+    test.each(["1", "true"])("isolates organization members with flag %s", async (enabled) => {
+      vi.stubEnv("ORGANIZATIONS_ENABLED", enabled);
+      await prismock.user.create({
+        data: {
+          username: "private-org-member",
+          email: "private-org-member@example.com",
+          organizationId: 2,
+        },
+      });
+
+      const users = await new UserRepository(prismock).findUsersByUsername({
+        usernameList: ["private-org-member"],
+        orgSlug: null,
+      });
+
+      expect(users).toEqual([]);
+    });
   });
 
   describe("create", () => {
@@ -257,7 +301,6 @@ describe("listUsers", () => {
     });
 
     const { users, total } = await new UserRepository(prismock).listUsers({
-
       searchTerm: "nonexistent-term-xyz",
       cursor: null,
       limit: 10,

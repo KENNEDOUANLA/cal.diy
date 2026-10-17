@@ -222,6 +222,9 @@ const nextConfig = (phase: string): NextConfig => {
   }
 
   return {
+    allowedDevOrigins: process.env.NEXT_PUBLIC_WEBAPP_URL
+      ? [new URL(process.env.NEXT_PUBLIC_WEBAPP_URL).hostname]
+      : [],
     output: process.env.BUILD_STANDALONE === "true" ? "standalone" : undefined,
     serverExternalPackages: [
       "deasync",
@@ -235,6 +238,7 @@ const nextConfig = (phase: string): NextConfig => {
     ],
     experimental: {
       optimizePackageImports: ["@calcom/ui"],
+      turbopackMemoryLimit: process.env.NODE_ENV === "development" ? 1024 ** 3 : undefined,
     },
     productionBrowserSourceMaps: true,
     transpilePackages: [
