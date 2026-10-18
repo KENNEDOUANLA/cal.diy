@@ -96,7 +96,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> = async (cont
 
   const usersInOrgContext = await getUsersInOrgContext(
     usernameList,
-    isValidOrgDomain ? currentOrgDomain : null
+    isValidOrgDomain ? currentOrgDomain : null,
   );
 
   const isDynamicGroup = usersInOrgContext.length > 1;
@@ -165,10 +165,10 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> = async (cont
   const eventTypes = await getEventTypesPublic(user.id);
 
   // if profile only has one public event-type, redirect to it
-  if (eventTypes.length === 1 && context.query.redirect !== "false") {
+  if (eventTypes.length === 1) {
     // Redirect but don't change the URL
     const urlDestination = `/${user.profile.username}/${eventTypes[0].slug}`;
-    const { query } = context;
+    const { user: _user, redirect: _redirect, ...query } = context.query;
     const urlQuery = new URLSearchParams(encode(query));
 
     return {

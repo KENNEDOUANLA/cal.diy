@@ -23,7 +23,7 @@ export class OAuthClientUsersService {
     private readonly schedulesService: SchedulesService_2024_04_15,
     private readonly calendarsService: CalendarsService,
     private readonly profilesRepository: ProfilesRepository,
-    private readonly membershipsRepository: MembershipsRepository
+    private readonly membershipsRepository: MembershipsRepository,
   ) {}
 
   async createOAuthClientUser(oAuthClient: PlatformOAuthClient, body: CreateManagedUserInput) {
@@ -33,14 +33,14 @@ export class OAuthClientUsersService {
     const existingUser = await this.getExistingUserByEmail(oAuthClientId, body.email);
     if (existingUser) {
       throw new ConflictException(
-        `User with the provided e-mail already exists. Existing user ID=${existingUser.id}`
+        `User with the provided e-mail already exists. Existing user ID=${existingUser.id}`,
       );
     }
 
     let user: User;
     if (!organizationId) {
       throw new BadRequestException(
-        "You cannot create a managed user outside of an organization - the OAuth client does not belong to any organization."
+        "You cannot create a managed user outside of an organization - the OAuth client does not belong to any organization.",
       );
     } else {
       // NOTE: createNewUsersConnectToOrgIfExists (the upstream EE helper this used to call) was removed
@@ -49,7 +49,10 @@ export class OAuthClientUsersService {
       // already functional and already injected in this service, mirroring the still-working
       // createOrUpdateMemberships flow used by regular signup.
       const email = OAuthClientUsersService.getOAuthUserEmail(oAuthClientId, body.email);
-      const username = OAuthClientUsersService.getOrgUsername(email);
+      const username = body.username ?? OAuthClientUsersService.getOrgUsername(email);
+      if (await this.userRepository.findByUsernameWithProfile(username)) {
+        throw new ConflictException("This booking address is already in use.");
+      }
 
       const createdUser = await this.userRepository.create({ ...body, email }, username, oAuthClientId, true);
 
@@ -58,7 +61,7 @@ export class OAuthClientUsersService {
         organizationId,
         createdUser.id,
         MembershipRole.MEMBER,
-        true
+        true,
       );
 
       user = await this.userRepository.update(createdUser.id, {
@@ -109,14 +112,14 @@ export class OAuthClientUsersService {
     const { offset, limit, emails } = queryParams;
 
     const oAuthEmails = emails?.map((email) =>
-      email.includes(oAuthClientId) ? email : OAuthClientUsersService.getOAuthUserEmail(oAuthClientId, email)
+      email.includes(oAuthClientId) ? email : OAuthClientUsersService.getOAuthUserEmail(oAuthClientId, email),
     );
 
     const managedUsers = await this.userRepository.findManagedUsersByOAuthClientIdAndEmails(
       oAuthClientId,
       offset ?? 0,
       limit ?? 50,
-      oAuthEmails
+      oAuthEmails,
     );
 
     return managedUsers;
@@ -126,7 +129,7 @@ export class OAuthClientUsersService {
     oAuthClientId: string,
     userId: number,
     body: UpdateManagedUserInput,
-    organizationId: number
+    organizationId: number,
   ) {
     if (body.email) {
       const emailWithOAuthId = OAuthClientUsersService.getOAuthUserEmail(oAuthClientId, body.email);

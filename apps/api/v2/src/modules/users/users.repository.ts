@@ -14,13 +14,16 @@ export type UserWithProfile = User & {
 
 @Injectable()
 export class UsersRepository {
-  constructor(private readonly dbRead: PrismaReadService, private readonly dbWrite: PrismaWriteService) {}
+  constructor(
+    private readonly dbRead: PrismaReadService,
+    private readonly dbWrite: PrismaWriteService,
+  ) {}
 
   async create(
     user: CreateManagedUserInput,
     username: string,
     oAuthClientId: string,
-    isPlatformManaged: boolean
+    isPlatformManaged: boolean,
   ) {
     return this.dbWrite.prisma.user.create({
       data: {
@@ -178,8 +181,6 @@ export class UsersRepository {
     });
   }
 
-
-
   async findByUsername(username: string, orgSlug?: string, orgId?: number) {
     return this.dbRead.prisma.user.findFirst({
       where:
@@ -217,7 +218,7 @@ export class UsersRepository {
     oauthClientId: string,
     cursor: number,
     limit: number,
-    oAuthEmails?: string[]
+    oAuthEmails?: string[],
   ) {
     return this.dbRead.prisma.user.findMany({
       where: {
@@ -243,7 +244,12 @@ export class UsersRepository {
   async update(userId: number, updateData: UpdateManagedUserInput) {
     return this.dbWrite.prisma.user.update({
       where: { id: userId },
-      data: updateData,
+      data: {
+        ...updateData,
+        ...(updateData.username
+          ? { profiles: { updateMany: { where: {}, data: { username: updateData.username } } } }
+          : {}),
+      },
     });
   }
 
@@ -469,7 +475,7 @@ export class UsersRepository {
     secondaryEmailId: number,
     oldPrimaryEmail: string,
     oldPrimaryEmailVerified: Date | null,
-    newPrimaryEmail: string
+    newPrimaryEmail: string,
   ) {
     const [, updatedUser] = await this.dbWrite.prisma.$transaction([
       this.dbWrite.prisma.secondaryEmail.update({

@@ -50,6 +50,7 @@ export const buttonClasses = cva(
       },
       color: {
         primary: [
+          "btn-primary",
           // Base colors
           "bg-brand-default",
           "text-brand",
@@ -215,12 +216,12 @@ export const buttonClasses = cva(
       color: "primary",
       size: "base",
     },
-  }
+  },
 );
 
 export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(function Button(
   props: ButtonProps,
-  forwardedRef
+  forwardedRef,
 ) {
   const {
     loading = false,
@@ -268,7 +269,7 @@ export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPr
                   loading ? "invisible" : "visible",
                   "button-icon group-[:not(div):active]:translate-y-[0.5px]",
                   variant === "icon" && "h-4 w-4",
-                  variant === "button" && "h-4 w-4 stroke-[1.5px] "
+                  variant === "button" && "h-4 w-4 stroke-[1.5px] ",
                 )}
               />
             )}
@@ -279,8 +280,9 @@ export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPr
           "contents", // This makes the div behave like it doesn't exist in the layout
           loading ? "invisible" : "visible",
           variant === "fab" ? "hidden md:contents" : "",
-          "group-[:not(div):active]:translate-y-[0.5px]"
-        )}>
+          "group-[:not(div):active]:translate-y-[0.5px]",
+        )}
+      >
         {props.children}
       </div>
       {loading && (
@@ -288,11 +290,12 @@ export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPr
           <svg
             className={classNames(
               "mx-4 h-5 w-5 animate-spin",
-              color === "primary" ? "text-inverted" : "text-emphasis"
+              color === "primary" ? "text-inverted" : "text-emphasis",
             )}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            viewBox="0 0 24 24">
+            viewBox="0 0 24 24"
+          >
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path
               className="opacity-75"
@@ -317,7 +320,7 @@ export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPr
                 loading ? "invisible" : "visible",
                 "group-[:not(div):active]:translate-y-[0.5px]",
                 variant === "icon" && "h-4 w-4",
-                variant === "button" && "h-4 w-4 stroke-[1.5px] "
+                variant === "button" && "h-4 w-4 stroke-[1.5px] ",
               )}
             />
           )}
@@ -334,7 +337,8 @@ export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPr
         {...(passThroughProps as Omit<JSX.IntrinsicElements["a"], "href" | "onClick" | "ref"> & LinkProps)}
         shallow={shallow && shallow}
         className={buttonClassName}
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         {buttonContent}
       </Link>
     );
@@ -346,14 +350,16 @@ export const Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPr
       tooltip={props.tooltip}
       tooltipSide={tooltipSide}
       tooltipOffset={tooltipOffset}
-      tooltipClassName={tooltipClassName}>
+      tooltipClassName={tooltipClassName}
+    >
       <button
         {...(passThroughProps as Omit<JSX.IntrinsicElements["button"], "onClick" | "ref">)}
         ref={forwardedRef as React.Ref<HTMLButtonElement>}
         disabled={disabled}
         type={type as "button" | "submit" | "reset"}
         className={buttonClassName}
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         {buttonContent}
       </button>
     </Wrapper>
@@ -383,7 +389,8 @@ const Wrapper = ({
       className={tooltipClassName}
       content={tooltip}
       side={tooltipSide}
-      sideOffset={tooltipOffset}>
+      sideOffset={tooltipOffset}
+    >
       {children}
     </Tooltip>
   );

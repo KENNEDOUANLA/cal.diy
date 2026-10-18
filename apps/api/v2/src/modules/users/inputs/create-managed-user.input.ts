@@ -2,13 +2,33 @@ import { Locales } from "@/lib/enums/locales";
 import { CapitalizeTimeZone } from "@/lib/inputs/capitalize-timezone";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { IsOptional, IsTimeZone, IsString, IsEnum, IsIn, IsUrl, IsObject, IsNumber } from "class-validator";
+import {
+  Matches,
+  MaxLength,
+  MinLength,
+  IsOptional,
+  IsTimeZone,
+  IsString,
+  IsEnum,
+  IsIn,
+  IsUrl,
+  IsObject,
+  IsNumber,
+} from "class-validator";
 
 import { ValidateMetadata } from "@calcom/platform-types";
 
 export type WeekDay = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
 export type TimeFormat = 12 | 24;
 export class CreateManagedUserInput {
+  @IsOptional()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(63)
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  @ApiPropertyOptional({ example: "carrosserie-martin" })
+  username?: string;
+
   @IsString()
   @ApiProperty({ example: "alice@example.com" })
   email!: string;

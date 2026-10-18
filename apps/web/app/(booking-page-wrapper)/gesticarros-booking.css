@@ -1,0 +1,116 @@
+.gc-booking {
+  --font-sans: var(--font-gesticarros), system-ui, sans-serif;
+  --font-cal: var(--font-gesticarros), system-ui, sans-serif;
+  --cal-brand: #ff9800;
+  --cal-brand-emphasis: #e68a00;
+  --cal-brand-text: #fff;
+  --cal-brand-accent: #fff;
+  --cal-brand-muted: #fff3df;
+  --cal-brand-subtle: #ffd999;
+  --cal-border: #dce2ef;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  background: radial-gradient(ellipse at 15% 0%, #e7ecff 0, transparent 55%), #f2f2f7;
+}
+.gc-booking-header {
+  display: flex;
+  align-items: center;
+  padding: 20px clamp(20px, 5vw, 72px);
+  border-bottom: 1px solid #dce2ef;
+  background: rgb(255 255 255 / 85%);
+}
+.gc-booking-logo {
+  width: 156px;
+  height: auto;
+}
+.gc-booking-content {
+  padding: 24px 16px 48px;
+}
+.gc-booking [data-testid="event-types"] {
+  border: 0;
+  display: grid;
+  gap: 12px;
+}
+.gc-booking [data-testid="event-type-link"] {
+  border: 1px solid #dce2ef;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgb(35 53 110 / 5%);
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s,
+    transform 0.18s;
+}
+.gc-booking [data-testid="event-type-link"]:hover {
+  border-color: #ff9800;
+  box-shadow: 0 8px 24px rgb(255 152 0 / 12%);
+  transform: translateY(-2px);
+}
+.gc-booking :is(button, a, input, textarea, select):focus-visible {
+  outline: 3px solid #ffce85;
+  outline-offset: 3px;
+}
+.dark .gc-booking {
+  --cal-brand: #ff9800;
+  --cal-brand-emphasis: #e68a00;
+  --cal-brand-text: #fff;
+  --cal-border: #343e59;
+  background: #151b2b;
+}
+.dark .gc-booking-header {
+  background: #1d263b;
+  border-color: #343e59;
+}
+.dark .gc-booking [data-testid="event-type-link"] {
+  border-color: #343e59;
+}
+@media (max-width: 640px) {
+  .gc-booking-header {
+    padding: 16px 20px;
+  }
+  .gc-booking-content {
+    padding: 16px 8px 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gc-booking [data-testid="event-type-link"] {
+    transition: none;
+    transform: none;
+  }
+}
+
+.gc-booking .btn-primary {
+  --ct-btn-color: #fff;
+  --ct-btn-bg: #ff9800;
+  --ct-btn-border-color: #ff9800;
+  --ct-btn-hover-color: #fff;
+  --ct-btn-active-color: #fff;
+  --ct-btn-disabled-color: #fff;
+  --ct-btn-hover-bg: #e68a00;
+  --ct-btn-hover-border-color: #e68a00;
+  --ct-btn-focus-shadow-rgb: 255, 152, 0;
+  color: var(--ct-btn-color);
+  background-color: var(--ct-btn-bg);
+  border: 1px solid var(--ct-btn-border-color);
+  border-radius: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  box-shadow: none;
+}
+.gc-booking .btn-primary:not(:disabled):is(:hover, :active) {
+  color: #fff;
+  background-color: var(--ct-btn-hover-bg);
+  border-color: var(--ct-btn-hover-border-color);
+}
+.gc-booking .btn-primary:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgb(var(--ct-btn-focus-shadow-rgb) / 50%);
+}
+.gc-booking .btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.gc-booking .btn-primary :is(span, svg) {
+  color: inherit;
+}

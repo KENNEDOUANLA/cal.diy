@@ -3,11 +3,31 @@ import { CapitalizeTimeZone } from "@/lib/inputs/capitalize-timezone";
 import { TimeFormat, WeekDay } from "@/modules/users/inputs/create-managed-user.input";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { IsEnum, IsIn, IsNumber, IsObject, IsOptional, IsString, IsTimeZone, IsUrl } from "class-validator";
+import {
+  Matches,
+  MaxLength,
+  MinLength,
+  IsEnum,
+  IsIn,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsTimeZone,
+  IsUrl,
+} from "class-validator";
 
 import { ValidateMetadata } from "@calcom/platform-types";
 
 export class UpdateManagedUserInput {
+  @IsOptional()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(63)
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  @ApiPropertyOptional({ example: "carrosserie-martin" })
+  username?: string;
+
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()
